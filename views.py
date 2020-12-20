@@ -3,7 +3,8 @@ from django.http import HttpResponse
 from .models import *
 from .forms import CreateUserForm
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, logout
+from django.contrib.auth import login as auth_login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -13,25 +14,25 @@ def login(request):
         return redirect('home')
     else:
         if request.method == 'POST':
-            email = request.POST.get('email')
+            username = request.POST.get('username')
             password =request.POST.get('password')
 
-            email = authenticate(request, email=email, password=password)
+            user = authenticate(request, username=username, password=password)
 
-            if email is not None:
-                login(request, email)
+            if user is not None:
+                auth_login(request, user)
                 return redirect('home')
             else:
                 messages.info(request, 'Email OR password is incorrect')
 
         context = {}
-        return render(request, 'sysadmin/login.html', context)
+        return render(request, 'accounts/login.html', context)
 
 def register(request):
     if request.user.is_authenticated:
         return redirect('home')
     else:
-        form = CreateUserForm()
+        form = CreateUserForm(initial={'username':'username'})
         
         if request.method == "POST":
             form = CreateUserForm(request.POST)

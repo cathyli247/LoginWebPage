@@ -8,8 +8,21 @@ class CreateUserForm(UserCreationForm):
     
     class meta:
         model = User
-        fields = ['email', 'password1', 'password2']
+        fields = ['username','email', 'password1', 'password2']
         
     def __init__(self, *args, **kwargs):
-       super(CreateUserForm, self).__init__(*args, **kwargs)
-       del self.fields['username']
+       user = super(CreateUserForm, self).__init__(*args, **kwargs)
+       self.fields['username'].required = False
+        
+    def save(self, commit=True):
+        user = super(CreateUserForm, self).save(commit=False)
+        user.username = self.cleaned_data['email']
+  
+        if commit:
+            user.save()
+#  
+#         return user
+#     def save(self, *args, **kwargs):
+#         if not self.username:
+#             self.username = self.email
+#         super(CreateUserForm, self).save(*args, **kwargs)

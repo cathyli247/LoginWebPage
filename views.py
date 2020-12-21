@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django import forms
+from django.contrib.auth.models import User
 
 # Create your views here.
 def email(request):
@@ -22,16 +23,22 @@ def email(request):
         except forms.ValidationError:
             context = {'errors':'Email format is incorrect'}
         else:
-            return redirect('login')
+            try:
+                match = User.objects.get(username=email)
+            except User.DoesNotExist:
+                return redirect('register', email=email)
+            else:
+                return redirect('login', email=email)
+            
     return render(request, 'sysadmin/email.html', context)
 
 
-def login(request):
+def login(request, email=None):
     if request.user.is_authenticated:
         return redirect('home')
     else:
         if request.method == 'POST':
-            username = request.POST.get('email')
+            username = email
             password =request.POST.get('password')
 
             user = authenticate(request, username=username, password=password)
@@ -42,22 +49,23 @@ def login(request):
             else:
                 messages.info(request, 'Email OR password is incorrect')
 
-        context = {}
+        context = {'email': email}
         return render(request, 'sysadmin/login.html', context)
 
-def register(request):
+def register(request, email=None):
     if request.user.is_authenticated:
         return redirect('home')
     else:
         form = CreateUserForm()     
         if request.method == "POST":
             form = CreateUserForm(request.POST)
+#             forms.fields['email']=email
             if form.is_valid():
                 form.save()
                 messages.success(request, 'The account was created successfully!')
-                return redirect('login')
+                return redirect('email')
         
-        context = {'form' : form}
+        context = {'form' : form, 'email':email}
         return render(request, 'sysadmin/register.html', context)
 
 def logoutUser(request):

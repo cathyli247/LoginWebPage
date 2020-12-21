@@ -92,11 +92,20 @@
 						</div>
 						{{errors}}
 				   		<div class="d-flex justify-content-center mt-3 login_container">
-				 			<input class="btn login_btn" type="submit" value="Submit">
+				 			<input class="btn login_btn" type="submit" value="Next">
 				   		</div>
 
 					</form>
+					
 				</div>
+				
+				<div class="mt-4">
+					<div class="d-flex justify-content-center links">
+						Don't have an account? <a href="{% url 'register_new' %}" class="ml-2">Sign Up</a>
+					</div>
+			
+				</div>
+				
 			</div>
 		</div>
 	</div>

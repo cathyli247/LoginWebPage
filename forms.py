@@ -13,16 +13,14 @@ class CreateUserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
        user = super(CreateUserForm, self).__init__(*args, **kwargs)
        self.fields['username'].required = False
-        
+    
+#     def set_email(self, email):
+#         user = super(CreateUserForm, self)
+#         user.email = email
+    
     def save(self, commit=True):
         user = super(CreateUserForm, self).save(commit=False)
-        user.username = self.cleaned_data['email']
+        user.username = self.data['email']
   
         if commit:
             user.save()
-#  
-#         return user
-#     def save(self, *args, **kwargs):
-#         if not self.username:
-#             self.username = self.email
-#         super(CreateUserForm, self).save(*args, **kwargs)

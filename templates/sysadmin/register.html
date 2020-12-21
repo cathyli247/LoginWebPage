@@ -77,11 +77,11 @@
 
 					<form method="POST" action="">
 						{% csrf_token %}
-						<div class="input-group mb-2">
+						<div class="input-group mb-3">
 							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-envelope-square"></i></span>
+								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							{{form.email}}
+							<input type="text" name="email" id="email" placeholder="{{email}}." class="form-control">
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
@@ -105,17 +105,21 @@
 				{{form.errors}}
 				<div class="mt-4">
 					<div class="d-flex justify-content-center links">
-						Already have an account? <a href="{% url 'login' %}" class="ml-2">Login</a>
+						Already have an account? <a href="{% url 'email' %}" class="ml-2">Login</a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<script>
-
+		var email = "{{email}}";
+		if (email != "None"){
+			document.getElementById("email").value = email;
+		}
+		
 		//Query All input fields
 		var form_fields = document.getElementsByTagName('input')
-		form_fields[1].placeholder='Email..';
+		form_fields[1].placeholder='Email...';
 		form_fields[2].placeholder='Enter password...';
 		form_fields[3].placeholder='Re-enter Password...';
 

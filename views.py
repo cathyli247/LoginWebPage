@@ -47,7 +47,7 @@ def login(request, email=None):
                 auth_login(request, user)
                 return redirect('home')
             else:
-                messages.info(request, 'Email OR password is incorrect')
+                messages.info(request, 'Password is incorrect')
 
         context = {'email': email}
         return render(request, 'sysadmin/login.html', context)

@@ -7,14 +7,31 @@ from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django import forms
 
 # Create your views here.
+def email(request):
+    email = 'email'
+    context = {}
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            validate_email(email)
+        except forms.ValidationError:
+            context = {'errors':'Email format is incorrect'}
+        else:
+            return redirect('login')
+    return render(request, 'sysadmin/email.html', context)
+
+
 def login(request):
     if request.user.is_authenticated:
         return redirect('home')
     else:
         if request.method == 'POST':
-            username = request.POST.get('username')
+            username = request.POST.get('email')
             password =request.POST.get('password')
 
             user = authenticate(request, username=username, password=password)
@@ -45,9 +62,9 @@ def register(request):
 
 def logoutUser(request):
     logout(request)
-    return redirect('login')
+    return redirect('email')
 
-@login_required(login_url='login')
+@login_required(login_url='email')
 def home(request):
     context = {}
     return render(request, 'sysadmin/home.html', context)

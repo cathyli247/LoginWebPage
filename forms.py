@@ -14,13 +14,19 @@ class CreateUserForm(UserCreationForm):
        user = super(CreateUserForm, self).__init__(*args, **kwargs)
        self.fields['username'].required = False
     
-#     def set_email(self, email):
-#         user = super(CreateUserForm, self)
-#         user.email = email
-    
     def save(self, commit=True):
         user = super(CreateUserForm, self).save(commit=False)
-        user.username = self.data['email']
+        user.username = self.cleaned_data['email']
   
         if commit:
             user.save()
+            
+     
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        try:
+            match = User.objects.get(username=email)
+        except User.DoesNotExist:
+            return email
+        raise forms.ValidationError('This email address is already in use.')
+      

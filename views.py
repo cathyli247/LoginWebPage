@@ -58,12 +58,16 @@ def register(request, email=None):
     else:
         form = CreateUserForm()     
         if request.method == "POST":
+
             form = CreateUserForm(request.POST)
-#             forms.fields['email']=email
             if form.is_valid():
-                form.save()
-                messages.success(request, 'The account was created successfully!')
-                return redirect('email')
+                try:
+                    form.save()
+                except forms.ValidationError:
+                    messages.warning(request, 'The email is already in use.')
+                else:
+                    messages.success(request, 'The account was created successfully!')
+                    return redirect('email')
         
         context = {'form' : form, 'email':email}
         return render(request, 'sysadmin/register.html', context)

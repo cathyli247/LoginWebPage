@@ -26,14 +26,13 @@ def login(request):
                 messages.info(request, 'Email OR password is incorrect')
 
         context = {}
-        return render(request, 'accounts/login.html', context)
+        return render(request, 'sysadmin/login.html', context)
 
 def register(request):
     if request.user.is_authenticated:
         return redirect('home')
     else:
-        form = CreateUserForm(initial={'username':'username'})
-        
+        form = CreateUserForm()     
         if request.method == "POST":
             form = CreateUserForm(request.POST)
             if form.is_valid():
@@ -43,6 +42,10 @@ def register(request):
         
         context = {'form' : form}
         return render(request, 'sysadmin/register.html', context)
+
+def logoutUser(request):
+    logout(request)
+    return redirect('login')
 
 @login_required(login_url='login')
 def home(request):
